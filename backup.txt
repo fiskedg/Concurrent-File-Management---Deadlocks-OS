@@ -1,0 +1,8 @@
+=== Student Snapshot ===
+S101,Alice,89
+S102,Ben,91
+S103,Charlie,88
+=== Grade Snapshot ===
+S101,Assignment1,85
+S102,Assignment4,91
+S103,Assignment2,93
