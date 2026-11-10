@@ -42,23 +42,19 @@ static void appendFile(char fileName[], char message[]){ //Appending adds anothe
 // Always check if the file opened successfully
     if (filePointer == NULL) {
         printf("Error: Could notopen the file.\n");
-        return NULL; // Exit the program with an error code
+        return; // Exit the program with an error code
     }
 
     //Write text to the file
-    fputs(message, filePointer);
+    if (fputs(message, filePointer) == EOF) {
+        printf("Error writing to file.\n");
+    }
 
     fclose(filePointer);
 }
 
 static void updateFile(char fileName[], char oldMessage[], char newMessage[]){ //Updating rewrites preexisting entries
     FILE *originalFilePointer = fopen(fileName, "r"); //open a file in write mode (overwrites what has already been written)
-
-// Always check if the file opened successfully
-    if (originalFilePointer == NULL) {
-        printf("Error: Could notopen the file.\n");
-        return NULL; // Exit the program with an error code
-    }
 
 FILE *tempFilePointer = fopen("temp.txt", "w");
 
@@ -84,14 +80,18 @@ if (strcmp(readBuffer, oldMessage) == 0) {
     fclose(originalFilePointer);
      fclose(tempFilePointer);
 
-     if (updated) {
-        remove(fileName);
-        rename("temp.txt", fileName);
-        printf("Record successfully updated.\n");
-    }else {
-        remove("temp.txt");
-        printf("Record not found.\n");
-    }
+    if (updated) {
+        if (rename("temp.txt", fileName) != 0) {
+            printf("Error replacing original file.\n");
+            remove("temp.txt");
+            return;
+        }
+
+    printf("Record successfully updated.\n");
+}else{
+    printf("Record not found. No changes were made.\n");
+    remove("temp.txt");
+}
 }
 
 
@@ -127,4 +127,37 @@ DIR *currDirectory = opendir(directoryName);
         }
     }
     closedir(currDirectory);
+}
+
+int main() {
+
+    // 1. Test creating a new file
+    FILE *testFile = createOrOpenFile(NULL, "created_test.txt");
+
+    if (testFile != NULL) {
+        fputs("This is a test file.\n", testFile);
+        fclose(testFile);
+    }
+
+    // 2. Test reading an existing file
+    printf("\n--- Testing readFile ---\n");
+    readFile("students.txt");
+
+    // 3. Test appending a new record
+    printf("\n--- Testing appendFile ---\n");
+    appendFile("students.txt", "Alex, 88\n");
+
+    // 4. Test updating an existing record
+    printf("\n--- Testing updateFile ---\n");
+    updateFile("students.txt", "John, 85\n", "John, 95\n");
+
+    // 5. Test retrieving file information
+    printf("\n--- Testing lastModified ---\n");
+    lastModified("students.txt");
+
+    // 6. Test listing files in the current directory
+    printf("\n--- Testing listFiles ---\n");
+    listFiles(".");
+
+    return 0;
 }
