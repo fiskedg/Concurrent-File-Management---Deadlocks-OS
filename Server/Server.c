@@ -9,7 +9,7 @@
 #include "file_management_system.h"
 
 #define QUEUE_SIZE 10 
-#define NUM_WORKERS 4
+#define NUM_WORKERS 6
 #define PORT 5000
 #define BUFFER_SIZE 4096
 
