@@ -38,9 +38,6 @@ typedef struct {
     pthread_t workers[NUM_WORKERS];
 } thread_pool_t;
 
-
-
-
 //good ol client , each worker thread 1 per job
 void handle_client(int client_fd) {
     char buffer[BUFFER_SIZE]; // Local thread-safe buffer
@@ -210,22 +207,83 @@ void process_command(char *command, int client_fd) {
        
     } else if (strncmp(command, "READ", 4) == 0) {
         // Handle READ command
-        dprintf(client_fd, "Reading file: %s\n.END.\n", argument);
+        if (argument == NULL || strlen(argument) == 0) {
+            dprintf(client_fd, "Error: No file name provided.\n.END.\n");
+            return;
+        }
+        readFile(argument, client_fd);
+        dprintf(client_fd, "\n.END.\n");
     } else if (strncmp(command, "APPEND", 6) == 0) {
         // Handle APPEND command
-        dprintf(client_fd, "Appending to file: %s\n.END.\n", argument);
+        if (argument == NULL || strlen(argument) == 0) {
+            dprintf(client_fd, "Error: No file name provided.\n.END.\n");
+            return;
+        }
+        char *message = strchr(argument, ' ');
+
+        if (message == NULL || message[1] == '\0') {
+            dprintf(client_fd, "Error: Please provide a filename and text.\n.END.\n");
+            return;
+        }
+
+        *message = '\0';
+        message++;
+        appendFile(argument, message, client_fd);
+        dprintf(client_fd, ".END.\n");
+        
     } else if (strncmp(command, "UPDATE", 6) == 0) {
         // Handle UPDATE command
-        dprintf(client_fd, "Updating file: %s\n.END.\n", argument);
+        if (argument == NULL || strlen(argument) == 0) {
+            dprintf(client_fd, "Error: No filename or update provided.\n.END.\n");
+            return;
+        }
+
+        char *updateInfo = strchr(argument, ' ');
+
+        if (updateInfo == NULL || updateInfo[1] == '\0') {
+            dprintf(client_fd, "Error: Please provide a filename and text.\n.END.\n");
+            return;
+        }
+
+        *updateInfo = '\0';
+        updateInfo++;
+
+        char *newMessage = strchr(updateInfo, '|');
+        if (newMessage == NULL || newMessage[1] == '\0') {
+            dprintf(client_fd, "Error: Please provide the new message after the delimiter.\n.END.\n");
+            return;
+        }
+        *newMessage = '\0';
+        newMessage++;
+
+        if (strlen(updateInfo) == 0 || strlen(newMessage) == 0) {
+            dprintf(client_fd, "Error: Please provide both the old and new messages.\n.END.\n");
+            return;
+        }
+        
+        updateFile(argument, updateInfo, newMessage, client_fd);
+        dprintf(client_fd, ".END.\n");
+        
     } else if (strncmp(command, "INFO", 4) == 0) {
         // Handle INFO command
-        dprintf(client_fd, "Getting info for file: %s\n.END.\n", argument);
+        if (argument == NULL || strlen(argument) == 0) {
+            dprintf(client_fd, "Error: No filename provided.\n.END.\n");
+            return;
+        }
+
+        lastModified(argument, client_fd);
+        dprintf(client_fd, ".END.\n");
+
     } else if (strncmp(command, "LIST", 4) == 0) {
         // Handle LIST command
-        dprintf(client_fd, "Listing all files\n.END.\n");
+        listFiles("", client_fd);
+        dprintf(client_fd, ".END.\n");
+
     } else if (strncmp(command, "QUIT", 4) == 0) {
         // Handle QUIT command
         dprintf(client_fd, "Quitting server\n.END.\n");
+        close(client_fd);
+        return;
     } else {
         // Handle unknown command
         dprintf(client_fd, "Unknown command: %s\n.END.\n", command);
