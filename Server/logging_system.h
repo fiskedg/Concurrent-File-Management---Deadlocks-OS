@@ -1,13 +1,15 @@
-#ifndef logging_system_h
-#define logging_system_h
+#ifndef LOGGING_SYSTEM_H
+#define LOGGING_SYSTEM_H
 
-#include <stdio.h>
-#include <stdlib.h>
+/*
+ * Execution log, one line per event:
+ *   HH:MM:SS.mmm | thread | event | resource | result | details
+ */
 
-extern FILE *loog;
+int  log_open(const char fileName[]);   // 0 = ok, -1 = couldn't open (still logs to stdout)
+void log_event(const char *thread, const char *event, const char *resource,
+               const char *result, const char *fmt, ...)
+    __attribute__((format(printf, 5, 6)));
+void log_close(void);
 
-static FILE* createOrOpenLogFile(FILE *loog, char fileName[]);
-static void appendLogFile(char message[]);
-static void closeLogFile();
-
-#endif // logging_system_h
+#endif

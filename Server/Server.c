@@ -20,7 +20,6 @@
 #define MAX_FILENAME 200
 #define LOG_FILE "execution.log"
 
-//To compile: make   (or: gcc -Wall -Wextra Server.c file_management_system.c logging_system.c -o server -pthread)
 
 int process_command(char *command, int client_fd);
 
