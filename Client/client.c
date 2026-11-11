@@ -2,8 +2,8 @@
  * Line-based client. Reads commands from stdin, sends each to the server,
  * prints the reply until END_MARKER.
  *
- *   ./client                     localhost:5050
- *   ./client 10.0.0.5 5050       custom host/port
+ *   ./client                     localhost:5000
+ *   ./client 10.0.0.5 5000       custom host/port
  *   ./client < commands.txt      scripted (no prompt when stdin isn't a tty)
  */
 #define _POSIX_C_SOURCE 200809L
@@ -16,7 +16,7 @@
 #include <arpa/inet.h>
 
 #define DEFAULT_HOST "127.0.0.1" //localhost
-#define PORT         5050
+#define PORT         5000
 #define MAX_LINE     1024 //maximum length of a line that can be read from stdin or sent to the server
 #define END_MARKER   ".END."     //this is the marker that indicates the end of a server response
 
@@ -33,7 +33,7 @@ static void usage(void) {
 
 int main(int argc, char *argv[]) {
     const char *host = (argc > 1) ? argv[1] : DEFAULT_HOST; //default host is localhost, take argument if provided
-    int port         = (argc > 2) ? atoi(argv[2]) : PORT; //default port is 5050, take argument if provided
+    int port         = (argc > 2) ? atoi(argv[2]) : PORT; //default port is 5000, take argument if provided
 
     int fd = socket(AF_INET, SOCK_STREAM, 0);
     if (fd < 0) { 

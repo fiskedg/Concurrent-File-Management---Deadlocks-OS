@@ -4,11 +4,15 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <dirent.h>
+#define FILE_DIRECTORY "../TextFileFolder/"
 
-static FILE* createOrOpenFile(FILE *filePointer, char fileName[]) {
+ FILE* createOrOpenFile(FILE *filePointer, char fileName[]) {
 
     //Open/Create the file in "w" (write) mode (overrides whatever written)
-    filePointer = fopen(fileName, "w");
+    char fullPath[256];
+    snprintf(fullPath, sizeof(fullPath), "%s%s", FILE_DIRECTORY, fileName);
+    
+    filePointer = fopen(fullPath, "w");
 
     // Always check if the file opened successfully
     if (filePointer == NULL) {
@@ -20,8 +24,10 @@ static FILE* createOrOpenFile(FILE *filePointer, char fileName[]) {
     return filePointer;
 }
 
-static void readFile(char fileName[]){
-FILE *filePointer = fopen(fileName, "r"); //open a file in read only mode
+void readFile(char fileName[]){
+    char fullPath[256];
+    snprintf(fullPath, sizeof(fullPath), "%s%s", FILE_DIRECTORY, fileName);
+    FILE *filePointer = fopen(fullPath, "r"); //open a file in read only mode
 
     if (filePointer == NULL) {
         printf("Error opening file.\n");
@@ -36,8 +42,10 @@ printf("%s", readBuffer);
 fclose(filePointer);
 }
 
-static void appendFile(char fileName[], char message[]){ //Appending adds another entry to the end of the file
-    FILE *filePointer = fopen(fileName, "a"); //open a file in append mode (doesn't overwrite what has already been written)
+void appendFile(char fileName[], char message[]){ //Appending adds another entry to the end of the file
+    char fullPath[256];
+    snprintf(fullPath, sizeof(fullPath), "%s%s", FILE_DIRECTORY, fileName);
+    FILE *filePointer = fopen(fullPath, "a"); //open a file in append mode (doesn't overwrite what has already been written)
 
 // Always check if the file opened successfully
     if (filePointer == NULL) {
@@ -53,10 +61,16 @@ static void appendFile(char fileName[], char message[]){ //Appending adds anothe
     fclose(filePointer);
 }
 
-static void updateFile(char fileName[], char oldMessage[], char newMessage[]){ //Updating rewrites preexisting entries
-    FILE *originalFilePointer = fopen(fileName, "r"); //open a file in write mode (overwrites what has already been written)
+void updateFile(char fileName[], char oldMessage[], char newMessage[]){ //Updating rewrites preexisting entries
+    char fullPath[256];
+    snprintf(fullPath, sizeof(fullPath), "%s%s", FILE_DIRECTORY, fileName);
+    FILE *originalFilePointer = fopen(fullPath, "r"); //open a file in write mode (overwrites what has already been written)
 
-FILE *tempFilePointer = fopen("temp.txt", "w");
+    if (originalFilePointer == NULL) {
+        printf("Error opening original file.\n");
+        return;
+    }
+FILE *tempFilePointer = fopen("../TextFileFolder/temp.txt", "w");
 
     if (tempFilePointer == NULL) {
         printf("Error creating temporary file.\n");
@@ -81,24 +95,26 @@ if (strcmp(readBuffer, oldMessage) == 0) {
      fclose(tempFilePointer);
 
     if (updated) {
-        if (rename("temp.txt", fileName) != 0) {
+        if (rename("../TextFileFolder/temp.txt", fullPath) != 0) {
             printf("Error replacing original file.\n");
-            remove("temp.txt");
+            remove("../TextFileFolder/temp.txt");
             return;
         }
 
     printf("Record successfully updated.\n");
 }else{
     printf("Record not found. No changes were made.\n");
-    remove("temp.txt");
+    remove("../TextFileFolder/temp.txt");
 }
 }
 
 
-static void lastModified(char fileName[]){
+void lastModified(char fileName[]){
 struct stat fileInfo;
 
-    if (stat(fileName, &fileInfo) != 0) {
+    char fullPath[256];
+    snprintf(fullPath, sizeof(fullPath), "%s%s", FILE_DIRECTORY, fileName);
+    if (stat(fullPath, &fileInfo) != 0) {
         printf("Error retrieving file information.\n");
         return;
     }
@@ -108,8 +124,9 @@ struct stat fileInfo;
 
 }
 
-static void listFiles(char directoryName[]){
-DIR *currDirectory = opendir(directoryName);
+void listFiles(char directoryName[]){
+    (void)directoryName;
+    DIR *currDirectory = opendir(FILE_DIRECTORY);
 
 // Always check if the directory opened successfully
     if (currDirectory == NULL) {
@@ -129,6 +146,7 @@ DIR *currDirectory = opendir(directoryName);
     closedir(currDirectory);
 }
 
+/*
 int main() {
 
     // 1. Test creating a new file
@@ -161,3 +179,4 @@ int main() {
 
     return 0;
 }
+*/
