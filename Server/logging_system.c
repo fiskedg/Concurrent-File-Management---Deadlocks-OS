@@ -4,7 +4,7 @@
 //loog writer does not need to read the file just write to it and make sure its there. 
 FILE *loog;
 
-static FILE* createOrOpenFile(FILE *loog, char fileName[]) {
+static FILE* createOrOpenLogFile(FILE *loog, char fileName[]) {
 
     //Open/Create the file in "w" (write) mode (overrides whatever written)
     loog = fopen(fileName, "w"); // <-- Fixed typo (changed loog to loog)
@@ -21,7 +21,7 @@ static FILE* createOrOpenFile(FILE *loog, char fileName[]) {
 //user has to specify loog file anyways, we shouldnt have to specifiy it each write call too.
 
 
-static void appendFile(char message[]){ //Appending adds another entry to the end of the file
+static void appendLogFile(char message[]){ //Appending adds another entry to the end of the file
 // Always check if the file opened successfully
     if (loog == NULL) {
         printf("Error: You did not specify a log file.\n");
@@ -31,6 +31,6 @@ static void appendFile(char message[]){ //Appending adds another entry to the en
     fputs(message, loog);
 }
 
-static void CloseReader(){
+static void closeLogFile(){
     fclose(loog); 
 }

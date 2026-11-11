@@ -7,6 +7,7 @@
 #include <netinet/in.h>
 #include <pthread.h>
 #include "file_management_system.h"
+#include "logging_system.h"
 
 #define QUEUE_SIZE 10 
 #define NUM_WORKERS 4
@@ -32,7 +33,8 @@ typedef struct {
     int rear;
     int count;
     int shutdown;
-    pthread_mutex_t mutex;
+    pthread_mutex_t write_lock; //mutex for synchronizing access to write operations
+    pthread_mutex_t mutex; // Mutex for synchronizing access to the queue
     pthread_cond_t not_empty;
     pthread_cond_t not_full;
     pthread_t workers[NUM_WORKERS];
@@ -139,6 +141,8 @@ int main(void) {
     thread_pool_t pool;
     pool_init(&pool);
 
+    createOrOpenLogFile(loog, "server_log.txt"); // Create or open the log file
+
     int server_fd, client_fd;
     struct sockaddr_in server_addr;
 
@@ -211,18 +215,26 @@ void process_command(char *command, int client_fd) {
     } else if (strncmp(command, "READ", 4) == 0) {
         // Handle READ command
         dprintf(client_fd, "Reading file: %s\n.END.\n", argument);
+        appendLogFile("READ command executed from client %s\n"); // Log the READ command
+        readFile(argument); // Example usage of readFile
     } else if (strncmp(command, "APPEND", 6) == 0) {
         // Handle APPEND command
         dprintf(client_fd, "Appending to file: %s\n.END.\n", argument);
+        appendFile(argument, "This is a test message.\n"); // Example usage of appendFile
     } else if (strncmp(command, "UPDATE", 6) == 0) {
         // Handle UPDATE command
+        appendLogFile("UPDATE command executed from client, lock acquired %s\n"); // Log the UPDATE command
+        
+        updateFile(argument, "This is an updated message.\n", "This is a completely new message.\n"); // Example usage of updateFile
         dprintf(client_fd, "Updating file: %s\n.END.\n", argument);
     } else if (strncmp(command, "INFO", 4) == 0) {
         // Handle INFO command
         dprintf(client_fd, "Getting info for file: %s\n.END.\n", argument);
+        lastModified(argument); // Example usage of lastModified
     } else if (strncmp(command, "LIST", 4) == 0) {
         // Handle LIST command
         dprintf(client_fd, "Listing all files\n.END.\n");
+        listFiles(argument); // Example usage of listFiles
     } else if (strncmp(command, "QUIT", 4) == 0) {
         // Handle QUIT command
         dprintf(client_fd, "Quitting server\n.END.\n");
