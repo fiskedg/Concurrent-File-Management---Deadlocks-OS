@@ -9,15 +9,11 @@
 
  FILE* createOrOpenFile(FILE *filePointer, char fileName[]) {
 
-    if (!isValidFileName(fileName)) {
-        printf("Error: Invalid filename.\n");
-        return;
-    }
-
+    //Open/Create the file in "w" (write) mode (overrides whatever written)
     char fullPath[256];
     snprintf(fullPath, sizeof(fullPath), "%s%s", FILE_DIRECTORY, fileName);
     
-    filePointer = fopen(fullPath, "wx"); //opens the file with 'w' which creates a file or overwrites the contents of a file if it exists combined with 'x' that only opens a file that exists and fails if the file has not been created.
+    filePointer = fopen(fullPath, "w");
 
     // Always check if the file opened successfully
     if (filePointer == NULL) {
@@ -30,12 +26,6 @@
 }
 
 void readFile(char fileName[], int client_fd){
-void readFile(char fileName[]){
-    if (!isValidFileName(fileName)) {
-        printf("Error: Invalid filename.\n");
-        return;
-    }
-
     char fullPath[256];
     snprintf(fullPath, sizeof(fullPath), "%s%s", FILE_DIRECTORY, fileName);
     FILE *filePointer = fopen(fullPath, "r"); //open a file in read only mode
@@ -52,22 +42,16 @@ while(fgets(readBuffer, sizeof(readBuffer), filePointer) != NULL){ // Reads up t
 }
 dprintf(client_fd, "\n");
 fclose(filePointer);
-return 0; //success return code
 }
 
-void appendFile(char fileName[], char message[]){ //Appending adds another entry to the end of the file
-    if (!isValidFileName(fileName)) {
-        printf("Error: Invalid filename.\n");
-        return;
-    }
-
+void appendFile(char fileName[], char message[], int client_fd){ //Appending adds another entry to the end of the file
     char fullPath[256];
     snprintf(fullPath, sizeof(fullPath), "%s%s", FILE_DIRECTORY, fileName);
     FILE *filePointer = fopen(fullPath, "a"); //open a file in append mode (doesn't overwrite what has already been written)
 
 // Always check if the file opened successfully
     if (filePointer == NULL) {
-        printf("Error: Could notopen the file.\n");
+        dprintf(client_fd, "Error: Could notopen the file.\n");
         return; // Exit the program with an error code
     }
 
@@ -77,15 +61,9 @@ void appendFile(char fileName[], char message[]){ //Appending adds another entry
     }
 
     fclose(filePointer);
-    return 0;
 }
 
-void updateFile(char fileName[], char oldMessage[], char newMessage[]){ //Updating rewrites preexisting entries
-    if (!isValidFileName(fileName)) {
-        printf("Error: Invalid filename.\n");
-        return;
-    }
-
+void updateFile(char fileName[], char oldMessage[], char newMessage[], int client_fd){ //Updating rewrites preexisting entries
     char fullPath[256];
     snprintf(fullPath, sizeof(fullPath), "%s%s", FILE_DIRECTORY, fileName);
     FILE *originalFilePointer = fopen(fullPath, "r"); //open a file in write mode (overwrites what has already been written)
@@ -94,12 +72,12 @@ void updateFile(char fileName[], char oldMessage[], char newMessage[]){ //Updati
         dprintf(client_fd, "Error opening original file.\n");
         return;
     }
-FILE *tempFilePointer = fopen("../TextFileFolder/temp.txt", "w"); 
+FILE *tempFilePointer = fopen("../TextFileFolder/temp.txt", "w");
 
     if (tempFilePointer == NULL) {
         dprintf(client_fd, "Error creating temporary file.\n");
         fclose(originalFilePointer);
-        return -1;
+        return;
     }
 
 char readBuffer[100]; //create a buffer to store the current words in a file being read
@@ -122,7 +100,7 @@ if (strcmp(readBuffer, oldMessage) == 0) {
         if (rename("../TextFileFolder/temp.txt", fullPath) != 0) {
             dprintf(client_fd, "Error replacing original file.\n");
             remove("../TextFileFolder/temp.txt");
-            return -1;
+            return;
         }
 
     dprintf(client_fd,"Record successfully updated.\n");
@@ -130,16 +108,10 @@ if (strcmp(readBuffer, oldMessage) == 0) {
     dprintf(client_fd, "Record not found. No changes were made.\n");
     remove("../TextFileFolder/temp.txt");
 }
-return 0;
 }
 
 
-void lastModified(char fileName[]){
-    if (!isValidFileName(fileName)) {
-        printf("Error: Invalid filename.\n");
-        return;
-    }
-
+void lastModified(char fileName[], int client_fd){
 struct stat fileInfo;
 
     char fullPath[256];
@@ -151,10 +123,7 @@ struct stat fileInfo;
 
    dprintf(client_fd, "File size: %ld bytes\n", (long)fileInfo.st_size);
    dprintf(client_fd, "Last modified: %s", ctime(&fileInfo.st_mtime));
-   dprintf(client_fd, "File size: %ld bytes\n", (long)fileInfo.st_size);
-   dprintf(client_fd, "Last modified: %s", ctime(&fileInfo.st_mtime));
 
-    return 0;
 }
 
 void listFiles(char directoryName[], int client_fd){
@@ -177,5 +146,4 @@ void listFiles(char directoryName[], int client_fd){
         }
     }
     closedir(currDirectory);
-    return 0;
 }
