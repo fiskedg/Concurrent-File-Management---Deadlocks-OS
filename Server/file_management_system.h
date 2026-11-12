@@ -2,6 +2,7 @@
 #define FILE_MANAGEMENT_SYSTEM_H
 
 #include <stdio.h>
+#define FILE_DIRECTORY "../TextFileFolder/"
 
 FILE *createOrOpenFile(FILE *filePointer, char fileName[]);
 void readFile(char fileName[], int client_fd);

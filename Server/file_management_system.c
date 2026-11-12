@@ -42,6 +42,7 @@ while(fgets(readBuffer, sizeof(readBuffer), filePointer) != NULL){ // Reads up t
 }
 dprintf(client_fd, "\n");
 fclose(filePointer);
+return 0; //success return code
 }
 
 void appendFile(char fileName[], char message[], int client_fd){ //Appending adds another entry to the end of the file
@@ -61,6 +62,7 @@ void appendFile(char fileName[], char message[], int client_fd){ //Appending add
     }
 
     fclose(filePointer);
+    return 0;
 }
 
 void updateFile(char fileName[], char oldMessage[], char newMessage[], int client_fd){ //Updating rewrites preexisting entries
@@ -77,7 +79,7 @@ FILE *tempFilePointer = fopen("../TextFileFolder/temp.txt", "w");
     if (tempFilePointer == NULL) {
         dprintf(client_fd, "Error creating temporary file.\n");
         fclose(originalFilePointer);
-        return;
+        return -1;
     }
 
 char readBuffer[100]; //create a buffer to store the current words in a file being read
@@ -100,7 +102,7 @@ if (strcmp(readBuffer, oldMessage) == 0) {
         if (rename("../TextFileFolder/temp.txt", fullPath) != 0) {
             dprintf(client_fd, "Error replacing original file.\n");
             remove("../TextFileFolder/temp.txt");
-            return;
+            return -1;
         }
 
     dprintf(client_fd,"Record successfully updated.\n");
@@ -108,6 +110,7 @@ if (strcmp(readBuffer, oldMessage) == 0) {
     dprintf(client_fd, "Record not found. No changes were made.\n");
     remove("../TextFileFolder/temp.txt");
 }
+return 0;
 }
 
 
@@ -123,7 +126,10 @@ struct stat fileInfo;
 
    dprintf(client_fd, "File size: %ld bytes\n", (long)fileInfo.st_size);
    dprintf(client_fd, "Last modified: %s", ctime(&fileInfo.st_mtime));
+   dprintf(client_fd, "File size: %ld bytes\n", (long)fileInfo.st_size);
+   dprintf(client_fd, "Last modified: %s", ctime(&fileInfo.st_mtime));
 
+    return 0;
 }
 
 void listFiles(char directoryName[], int client_fd){
@@ -146,6 +152,7 @@ void listFiles(char directoryName[], int client_fd){
         }
     }
     closedir(currDirectory);
+    return 0;
 }
 
 /*
