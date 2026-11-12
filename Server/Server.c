@@ -10,7 +10,7 @@
 
 #define QUEUE_SIZE 10 
 #define NUM_WORKERS 4
-#define PORT 5000
+#define PORT 5001
 #define BUFFER_SIZE 4096
 
 //To compile run gcc -Wall -Wextra Server.c file_management_system.c -o server -pthread

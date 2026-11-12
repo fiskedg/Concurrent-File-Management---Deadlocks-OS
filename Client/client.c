@@ -3,7 +3,7 @@
  * prints the reply until END_MARKER.
  *
  *   ./client                     localhost:5000
- *   ./client 10.0.0.5 5000       custom host/port
+ *   ./client 10.0.0.5 5001       custom host/port
  *   ./client < commands.txt      scripted (no prompt when stdin isn't a tty)
  */
 #define _POSIX_C_SOURCE 200809L
@@ -16,7 +16,7 @@
 #include <arpa/inet.h>
 
 #define DEFAULT_HOST "127.0.0.1" //localhost
-#define PORT         5000
+#define PORT         5001
 #define MAX_LINE     1024 //maximum length of a line that can be read from stdin or sent to the server
 #define END_MARKER   ".END."     //this is the marker that indicates the end of a server response
 
