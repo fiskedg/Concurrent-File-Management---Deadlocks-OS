@@ -13,8 +13,13 @@
 #include "file_management_system.h"
 #include "logging_system.h"
 
+<<<<<<< HEAD
 #define QUEUE_SIZE 10
 #define NUM_WORKERS 4
+=======
+#define QUEUE_SIZE 10 
+#define NUM_WORKERS 6
+>>>>>>> 12a72b15a862bf4c166daad52c5d5f52c8dbc414
 #define PORT 5000
 #define BUFFER_SIZE 4096
 #define MAX_FILENAME 200

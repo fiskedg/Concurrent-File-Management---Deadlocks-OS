@@ -9,11 +9,15 @@
 
  FILE* createOrOpenFile(FILE *filePointer, char fileName[]) {
 
-    //Open/Create the file in "w" (write) mode (overrides whatever written)
+    if (!isValidFileName(fileName)) {
+        printf("Error: Invalid filename.\n");
+        return;
+    }
+
     char fullPath[256];
     snprintf(fullPath, sizeof(fullPath), "%s%s", FILE_DIRECTORY, fileName);
     
-    filePointer = fopen(fullPath, "w");
+    filePointer = fopen(fullPath, "wx"); //opens the file with 'w' which creates a file or overwrites the contents of a file if it exists combined with 'x' that only opens a file that exists and fails if the file has not been created.
 
     // Always check if the file opened successfully
     if (filePointer == NULL) {
@@ -26,6 +30,12 @@
 }
 
 void readFile(char fileName[], int client_fd){
+void readFile(char fileName[]){
+    if (!isValidFileName(fileName)) {
+        printf("Error: Invalid filename.\n");
+        return;
+    }
+
     char fullPath[256];
     snprintf(fullPath, sizeof(fullPath), "%s%s", FILE_DIRECTORY, fileName);
     FILE *filePointer = fopen(fullPath, "r"); //open a file in read only mode
@@ -45,14 +55,19 @@ fclose(filePointer);
 return 0; //success return code
 }
 
-void appendFile(char fileName[], char message[], int client_fd){ //Appending adds another entry to the end of the file
+void appendFile(char fileName[], char message[]){ //Appending adds another entry to the end of the file
+    if (!isValidFileName(fileName)) {
+        printf("Error: Invalid filename.\n");
+        return;
+    }
+
     char fullPath[256];
     snprintf(fullPath, sizeof(fullPath), "%s%s", FILE_DIRECTORY, fileName);
     FILE *filePointer = fopen(fullPath, "a"); //open a file in append mode (doesn't overwrite what has already been written)
 
 // Always check if the file opened successfully
     if (filePointer == NULL) {
-        dprintf(client_fd, "Error: Could notopen the file.\n");
+        printf("Error: Could notopen the file.\n");
         return; // Exit the program with an error code
     }
 
@@ -65,7 +80,12 @@ void appendFile(char fileName[], char message[], int client_fd){ //Appending add
     return 0;
 }
 
-void updateFile(char fileName[], char oldMessage[], char newMessage[], int client_fd){ //Updating rewrites preexisting entries
+void updateFile(char fileName[], char oldMessage[], char newMessage[]){ //Updating rewrites preexisting entries
+    if (!isValidFileName(fileName)) {
+        printf("Error: Invalid filename.\n");
+        return;
+    }
+
     char fullPath[256];
     snprintf(fullPath, sizeof(fullPath), "%s%s", FILE_DIRECTORY, fileName);
     FILE *originalFilePointer = fopen(fullPath, "r"); //open a file in write mode (overwrites what has already been written)
@@ -74,7 +94,7 @@ void updateFile(char fileName[], char oldMessage[], char newMessage[], int clien
         dprintf(client_fd, "Error opening original file.\n");
         return;
     }
-FILE *tempFilePointer = fopen("../TextFileFolder/temp.txt", "w");
+FILE *tempFilePointer = fopen("../TextFileFolder/temp.txt", "w"); 
 
     if (tempFilePointer == NULL) {
         dprintf(client_fd, "Error creating temporary file.\n");
@@ -114,7 +134,12 @@ return 0;
 }
 
 
-void lastModified(char fileName[], int client_fd){
+void lastModified(char fileName[]){
+    if (!isValidFileName(fileName)) {
+        printf("Error: Invalid filename.\n");
+        return;
+    }
+
 struct stat fileInfo;
 
     char fullPath[256];
@@ -154,38 +179,3 @@ void listFiles(char directoryName[], int client_fd){
     closedir(currDirectory);
     return 0;
 }
-
-/*
-int main() {
-
-    // 1. Test creating a new file
-    FILE *testFile = createOrOpenFile(NULL, "created_test.txt");
-
-    if (testFile != NULL) {
-        fputs("This is a test file.\n", testFile);
-        fclose(testFile);
-    }
-
-    // 2. Test reading an existing file
-    printf("\n--- Testing readFile ---\n");
-    readFile("students.txt");
-
-    // 3. Test appending a new record
-    printf("\n--- Testing appendFile ---\n");
-    appendFile("students.txt", "Alex, 88\n");
-
-    // 4. Test updating an existing record
-    printf("\n--- Testing updateFile ---\n");
-    updateFile("students.txt", "John, 85\n", "John, 95\n");
-
-    // 5. Test retrieving file information
-    printf("\n--- Testing lastModified ---\n");
-    lastModified("students.txt");
-
-    // 6. Test listing files in the current directory
-    printf("\n--- Testing listFiles ---\n");
-    listFiles(".");
-
-    return 0;
-}
-*/
