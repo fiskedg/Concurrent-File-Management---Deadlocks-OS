@@ -14,7 +14,7 @@
 #define PORT 5001
 #define BUFFER_SIZE 4096
 
-//To compile run gcc -Wall -Wextra Server.c file_management_system.c -o server -pthread
+//To compile completely run gcc -Wall -Wextra Server.c file_management_system.c deadlockDemo.c logging_system.c -o server -pthread
 
 void process_command(char *command, int client_fd);
 
