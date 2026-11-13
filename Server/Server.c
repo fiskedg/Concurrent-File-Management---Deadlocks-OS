@@ -10,7 +10,7 @@
 #include "deadlockDemo.h" // Include the header for user to run the deadlock demo
 
 #define QUEUE_SIZE 10 
-#define NUM_WORKERS 4
+#define NUM_WORKERS 6
 #define PORT 5001
 #define BUFFER_SIZE 4096
 
