@@ -1,0 +1,141 @@
+19:47:10.133 | MAIN | MODE_START          | -     | OK    | A-DEADLOCK, data reset
+19:47:10.133 | T2   | THREAD_START        | -     | OK    | pthread=139823050368704 task=update S102 grade + name (B then A)
+19:47:10.133 | T2   | LOCK_ACQUIRED       | B     | OK    | grades.txt
+19:47:10.133 | T5   | THREAD_START        | -     | OK    | pthread=139823025190592 task=grade statistics (B)
+19:47:10.133 | T6   | THREAD_START        | -     | OK    | pthread=139823016797888 task=backup snapshot (A then B then D)
+19:47:10.133 | T1   | THREAD_START        | -     | OK    | pthread=139823058761408 task=read S101, append S101,Assignment5,95 (A then B)
+19:47:10.133 | T1   | LOCK_ACQUIRED       | A     | OK    | students.txt
+19:47:10.134 | T1   | FILE_READ           | A     | OK    | found S101,Ana,CSC3320
+19:47:10.134 | T2   | CHANGE_STAGED       | B     | OK    | 91->94 held in memory, not written
+19:47:10.134 | T2   | LOCK_WAIT           | A     | WAIT  | owner=T1
+19:47:10.134 | T1   | LOCK_WAIT           | B     | WAIT  | owner=T2
+19:47:10.134 | T3   | THREAD_START        | -     | OK    | pthread=139823041976000 task=count students (A)
+19:47:10.134 | T3   | LOCK_WAIT           | A     | WAIT  | owner=T1
+19:47:10.134 | MAIN | DEADLOCK_DETECTED   | A,B   | ALERT | cycle=T1->T2->T1
+19:47:10.134 | MAIN | WAIT_FOR_EDGE       | B     | INFO  | T1 holds A, requests B (owner=T2)
+19:47:10.134 | MAIN | WAIT_FOR_EDGE       | A     | INFO  | T2 holds B, requests A (owner=T1)
+19:47:10.134 | MAIN | DEMO_STOP           | A,B   | ALERT | mode A: cancelling cycle members so the demo ends
+19:47:10.134 | T2   | ABORT_REQUESTED     | B     | OK    | victim=T2
+19:47:10.134 | T2   | ROLLBACK_COMPLETE   | files | OK    | staged changes discarded
+19:47:10.134 | T2   | LOCK_RELEASED       | B     | OK    | cooperative abort
+19:47:10.134 | T2   | SAFE_ABORT          | A,B   | OK    | files unchanged
+19:47:10.134 | T1   | ABORT_REQUESTED     | B     | OK    | victim=T1
+19:47:10.134 | T1   | ROLLBACK_COMPLETE   | files | OK    | nothing written
+19:47:10.134 | T1   | LOCK_RELEASED       | A     | OK    | aborted, no changes
+19:47:10.134 | T1   | SAFE_ABORT          | A,B   | OK    | files unchanged
+19:47:10.134 | T5   | LOCK_ACQUIRED       | B     | OK    | grades.txt
+19:47:10.134 | T4   | THREAD_START        | -     | OK    | pthread=139823033583296 task=append committed operations to audit.txt (C)
+19:47:10.134 | T4   | AUDIT_APPEND        | C     | OK    | no committed operations to record
+19:47:10.134 | T3   | LOCK_ACQUIRED       | A     | OK    | students.txt
+19:47:10.134 | T5   | STATS               | B     | OK    | count=2 average=89.50 min=88 max=91
+19:47:10.134 | T5   | LOCK_RELEASED       | B     | OK    | read done
+19:47:10.134 | T3   | FILE_READ           | A     | OK    | Total students = 2
+19:47:10.134 | T6   | LOCK_WAIT           | A     | WAIT  | owner=T3
+19:47:10.135 | T3   | LOCK_RELEASED       | A     | OK    | read done
+19:47:10.135 | T6   | LOCK_ACQUIRED       | A     | OK    | students.txt
+19:47:10.135 | T6   | LOCK_ACQUIRED       | B     | OK    | grades.txt
+19:47:10.135 | T6   | LOCK_ACQUIRED       | D     | OK    | backup.txt
+19:47:10.135 | T6   | BACKUP_CREATED      | D     | OK    | 2 student + 2 grade records
+19:47:10.135 | T6   | LOCK_RELEASED       | D     | OK    | backup done
+19:47:10.135 | T6   | LOCK_RELEASED       | B     | OK    | backup done
+19:47:10.135 | T6   | LOCK_RELEASED       | A     | OK    | backup done
+19:47:10.135 | MAIN | DETECTOR_DONE       | -     | OK    | 1 deadlock cycle(s) detected
+19:47:10.135 | MAIN | MODE_END            | -     | OK    | A-DEADLOCK, all 6 workers joined
+19:47:10.135 | MAIN | MODE_START          | -     | OK    | B-PREVENTION, data reset
+19:47:10.135 | T1   | THREAD_START        | -     | OK    | pthread=139823016797888 task=read S101, append S101,Assignment5,95 (A then B)
+19:47:10.135 | T1   | LOCK_ACQUIRED       | A     | OK    | students.txt
+19:47:10.136 | T3   | THREAD_START        | -     | OK    | pthread=139823033583296 task=count students (A)
+19:47:10.136 | T3   | LOCK_WAIT           | A     | WAIT  | owner=T1
+19:47:10.136 | T5   | THREAD_START        | -     | OK    | pthread=139823058761408 task=grade statistics (B)
+19:47:10.136 | T6   | THREAD_START        | -     | OK    | pthread=139823050368704 task=backup snapshot (A then B then D)
+19:47:10.136 | T2   | THREAD_START        | -     | OK    | pthread=139823025190592 task=update S102 grade + name (A then B)
+19:47:10.136 | T2   | LOCK_WAIT           | A     | WAIT  | owner=T1
+19:47:10.136 | T4   | THREAD_START        | -     | OK    | pthread=139823041976000 task=append committed operations to audit.txt (C)
+19:47:10.136 | T1   | FILE_READ           | A     | OK    | found S101,Ana,CSC3320
+19:47:10.136 | T1   | LOCK_ACQUIRED       | B     | OK    | grades.txt
+19:47:10.136 | T1   | OP_COMPLETE         | files | OK    | grade committed
+19:47:10.136 | T1   | LOCK_RELEASED       | B     | OK    | transaction ended
+19:47:10.136 | T1   | LOCK_RELEASED       | A     | OK    | transaction ended
+19:47:10.136 | T2   | LOCK_ACQUIRED       | A     | OK    | students.txt
+19:47:10.136 | T2   | LOCK_ACQUIRED       | B     | OK    | grades.txt
+19:47:10.136 | T2   | OP_COMPLETE         | files | OK    | records updated
+19:47:10.136 | T2   | LOCK_RELEASED       | B     | OK    | transaction ended
+19:47:10.136 | T2   | LOCK_RELEASED       | A     | OK    | transaction ended
+19:47:10.136 | T3   | LOCK_ACQUIRED       | A     | OK    | students.txt
+19:47:10.136 | T4   | LOCK_ACQUIRED       | C     | OK    | audit.txt
+19:47:10.136 | T3   | FILE_READ           | A     | OK    | Total students = 2
+19:47:10.136 | T6   | LOCK_WAIT           | A     | WAIT  | owner=T3
+19:47:10.136 | T4   | AUDIT_APPEND        | C     | OK    | 2026-11-12,T1,Grade added for S101
+19:47:10.136 | T5   | LOCK_ACQUIRED       | B     | OK    | grades.txt
+19:47:10.136 | T3   | LOCK_RELEASED       | A     | OK    | read done
+19:47:10.136 | T6   | LOCK_ACQUIRED       | A     | OK    | students.txt
+19:47:10.136 | T6   | LOCK_WAIT           | B     | WAIT  | owner=T5
+19:47:10.136 | T4   | LOCK_RELEASED       | C     | OK    | audit written
+19:47:10.136 | T4   | LOCK_ACQUIRED       | C     | OK    | audit.txt
+19:47:10.136 | T5   | STATS               | B     | OK    | count=3 average=92.33 min=88 max=95
+19:47:10.136 | T5   | LOCK_RELEASED       | B     | OK    | read done
+19:47:10.136 | T4   | AUDIT_APPEND        | C     | OK    | 2026-11-12,T2,Student record updated for S102
+19:47:10.136 | T6   | LOCK_ACQUIRED       | B     | OK    | grades.txt
+19:47:10.136 | T6   | LOCK_ACQUIRED       | D     | OK    | backup.txt
+19:47:10.136 | T4   | LOCK_RELEASED       | C     | OK    | audit written
+19:47:10.136 | T6   | BACKUP_CREATED      | D     | OK    | 2 student + 3 grade records
+19:47:10.136 | T6   | LOCK_RELEASED       | D     | OK    | backup done
+19:47:10.136 | T6   | LOCK_RELEASED       | B     | OK    | backup done
+19:47:10.136 | T6   | LOCK_RELEASED       | A     | OK    | backup done
+19:47:10.136 | MAIN | DETECTOR_DONE       | -     | OK    | 0 deadlock cycle(s) detected
+19:47:10.136 | MAIN | MODE_END            | -     | OK    | B-PREVENTION, all 6 workers joined
+19:47:10.137 | MAIN | MODE_START          | -     | OK    | C-RECOVERY, data reset
+19:47:10.137 | T1   | THREAD_START        | -     | OK    | pthread=139823050368704 task=read S101, append S101,Assignment5,95 (A then B)
+19:47:10.137 | T1   | LOCK_ACQUIRED       | A     | OK    | students.txt
+19:47:10.137 | T3   | THREAD_START        | -     | OK    | pthread=139823041976000 task=count students (A)
+19:47:10.137 | T3   | LOCK_WAIT           | A     | WAIT  | owner=T1
+19:47:10.137 | T1   | FILE_READ           | A     | OK    | found S101,Ana,CSC3320
+19:47:10.137 | T6   | THREAD_START        | -     | OK    | pthread=139823016797888 task=backup snapshot (A then B then D)
+19:47:10.137 | T5   | THREAD_START        | -     | OK    | pthread=139823025190592 task=grade statistics (B)
+19:47:10.137 | T4   | THREAD_START        | -     | OK    | pthread=139823033583296 task=append committed operations to audit.txt (C)
+19:47:10.137 | T2   | THREAD_START        | -     | OK    | pthread=139823058761408 task=update S102 grade + name (B then A)
+19:47:10.137 | T2   | LOCK_ACQUIRED       | B     | OK    | grades.txt
+19:47:10.137 | T2   | CHANGE_STAGED       | B     | OK    | 91->94 held in memory, not written
+19:47:10.137 | T2   | LOCK_WAIT           | A     | WAIT  | owner=T1
+19:47:10.137 | T1   | LOCK_WAIT           | B     | WAIT  | owner=T2
+19:47:10.137 | MAIN | DEADLOCK_DETECTED   | A,B   | ALERT | cycle=T1->T2->T1
+19:47:10.137 | MAIN | WAIT_FOR_EDGE       | B     | INFO  | T1 holds A, requests B (owner=T2)
+19:47:10.137 | MAIN | WAIT_FOR_EDGE       | A     | INFO  | T2 holds B, requests A (owner=T1)
+19:47:10.137 | MAIN | VICTIM_SELECTED     | A     | OK    | victim=T2
+19:47:10.137 | T2   | ABORT_REQUESTED     | B     | OK    | victim=T2
+19:47:10.137 | T2   | ROLLBACK_COMPLETE   | files | OK    | staged changes discarded
+19:47:10.137 | T2   | LOCK_RELEASED       | B     | OK    | cooperative abort
+19:47:10.137 | T2   | RETRY_STARTED       | A,B   | OK    | ordered A->B
+19:47:10.137 | T1   | LOCK_ACQUIRED       | B     | OK    | grades.txt
+19:47:10.137 | T2   | LOCK_WAIT           | A     | WAIT  | owner=T1
+19:47:10.137 | T1   | OP_COMPLETE         | files | OK    | grade committed
+19:47:10.137 | T1   | LOCK_RELEASED       | B     | OK    | transaction ended
+19:47:10.137 | T1   | LOCK_RELEASED       | A     | OK    | transaction ended
+19:47:10.137 | T2   | LOCK_ACQUIRED       | A     | OK    | students.txt
+19:47:10.137 | T2   | LOCK_ACQUIRED       | B     | OK    | grades.txt
+19:47:10.137 | T2   | OP_COMPLETE         | files | OK    | records updated
+19:47:10.137 | T2   | LOCK_RELEASED       | B     | OK    | transaction ended
+19:47:10.137 | T2   | LOCK_RELEASED       | A     | OK    | transaction ended
+19:47:10.137 | T3   | LOCK_ACQUIRED       | A     | OK    | students.txt
+19:47:10.137 | T5   | LOCK_ACQUIRED       | B     | OK    | grades.txt
+19:47:10.137 | T3   | FILE_READ           | A     | OK    | Total students = 2
+19:47:10.137 | T6   | LOCK_WAIT           | A     | WAIT  | owner=T3
+19:47:10.137 | T4   | LOCK_ACQUIRED       | C     | OK    | audit.txt
+19:47:10.137 | T5   | STATS               | B     | OK    | count=3 average=92.33 min=88 max=95
+19:47:10.137 | T3   | LOCK_RELEASED       | A     | OK    | read done
+19:47:10.137 | T6   | LOCK_ACQUIRED       | A     | OK    | students.txt
+19:47:10.137 | T6   | LOCK_WAIT           | B     | WAIT  | owner=T5
+19:47:10.137 | T4   | AUDIT_APPEND        | C     | OK    | 2026-11-12,T1,Grade added for S101
+19:47:10.137 | T5   | LOCK_RELEASED       | B     | OK    | read done
+19:47:10.137 | T6   | LOCK_ACQUIRED       | B     | OK    | grades.txt
+19:47:10.137 | T6   | LOCK_ACQUIRED       | D     | OK    | backup.txt
+19:47:10.137 | T4   | LOCK_RELEASED       | C     | OK    | audit written
+19:47:10.137 | T4   | LOCK_ACQUIRED       | C     | OK    | audit.txt
+19:47:10.137 | T4   | AUDIT_APPEND        | C     | OK    | 2026-11-12,T2,Student record updated for S102
+19:47:10.137 | T4   | LOCK_RELEASED       | C     | OK    | audit written
+19:47:10.137 | T6   | BACKUP_CREATED      | D     | OK    | 2 student + 3 grade records
+19:47:10.138 | T6   | LOCK_RELEASED       | D     | OK    | backup done
+19:47:10.138 | T6   | LOCK_RELEASED       | B     | OK    | backup done
+19:47:10.138 | T6   | LOCK_RELEASED       | A     | OK    | backup done
+19:47:10.138 | MAIN | DETECTOR_DONE       | -     | OK    | 1 deadlock cycle(s) detected
+19:47:10.138 | MAIN | MODE_END            | -     | OK    | C-RECOVERY, all 6 workers joined

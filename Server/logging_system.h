@@ -11,5 +11,6 @@ void log_event(const char *thread, const char *event, const char *resource,
                const char *result, const char *fmt, ...)
     __attribute__((format(printf, 5, 6)));
 void log_close(void);
+void log_set_mirror(int fd);            // also send each line to this socket; -1 = off
 
 #endif

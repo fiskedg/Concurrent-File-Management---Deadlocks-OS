@@ -7,6 +7,7 @@
 #include <netinet/in.h>
 #include <pthread.h>
 #include "file_management_system.h"
+#include "deadlockDemo.h" // Include the header for user to run the deadlock demo
 
 #define QUEUE_SIZE 10 
 #define NUM_WORKERS 4
@@ -277,6 +278,11 @@ void process_command(char *command, int client_fd) {
     } else if (strncmp(command, "LIST", 4) == 0) {
         // Handle LIST command
         listFiles("", client_fd);
+        dprintf(client_fd, ".END.\n");
+
+    } else if (strncmp(command, "DEMO", 4) == 0) {
+        // Handle DEMO command: 
+        run_demo(argument, client_fd); //run the demo
         dprintf(client_fd, ".END.\n");
 
     } else if (strncmp(command, "QUIT", 4) == 0) {
